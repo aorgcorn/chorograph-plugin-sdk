@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(
             name: "ChorographPluginSDK",
+            type: .dynamic,
             targets: ["ChorographPluginSDK"]
         ),
     ],
