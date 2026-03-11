@@ -16,7 +16,7 @@ import Foundation
 /// Called on the `@MainActor`; implementations must not block.
 public protocol TelemetryHandler: AnyObject, Sendable {
     /// Called for every `ProviderEvent` emitted by any active provider.
-    @MainActor func handleEvent(_ event: any ProviderEvent)
+    @MainActor func handleEvent(_ event: any PluginEvent)
 }
 
 // MARK: - PluginCommand (.commandBarEntry)

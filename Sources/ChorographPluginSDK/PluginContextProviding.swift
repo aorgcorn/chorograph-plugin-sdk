@@ -73,4 +73,13 @@ public protocol PluginContextProviding: AnyObject {
     ///   - title: Sheet navigation title (e.g. "OpenCode Server Settings").
     ///   - view: The settings panel view, type-erased with `AnyView(...)`.
     func registerSettingsPanel(title: String, _ view: AnyView)
+
+    // MARK: Direct event injection (.customEvents)
+
+    /// Inject a `PluginEvent` directly into the host's telemetry pipeline.
+    /// Requires the `.customEvents` capability.
+    ///
+    /// Use this to emit `RuntimeTestResultEvent`, `RuntimeHeatEvent`, or any
+    /// custom event without going through an `AIProvider` event stream.
+    func emitEvent(_ event: any PluginEvent)
 }

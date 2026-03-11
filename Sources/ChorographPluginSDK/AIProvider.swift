@@ -39,7 +39,7 @@ public protocol AIProvider: Actor {
     /// Subscribe to real-time events from the provider.
     /// The returned stream delivers `ProviderEvent` values until the provider is stopped
     /// or the stream is cancelled.
-    func eventStream() -> AsyncStream<any ProviderEvent>
+    func eventStream() -> AsyncStream<any PluginEvent>
 
     /// Stop the event stream (e.g. when the app is backgrounded or provider is switched).
     func stopEventStream()

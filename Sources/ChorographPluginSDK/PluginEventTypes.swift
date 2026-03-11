@@ -1,5 +1,5 @@
-// ProviderEventTypes.swift
-// Concrete ProviderEvent implementations — one struct per event type.
+// PluginEventTypes.swift
+// Concrete PluginEvent implementations — one struct per event type.
 // All types are public so plugins can pattern-match against them.
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 
 /// Namespace for built-in event type identifiers.
 /// Plugins should use their own reverse-DNS prefix (e.g. "com.acme.myplugin.myEvent").
-public enum ProviderEventTypeID {
+public enum PluginEventTypeID {
     public static let readFile          = "com.chorograph.readFile"
     public static let writeFile         = "com.chorograph.writeFile"
     public static let patchFile         = "com.chorograph.patchFile"
@@ -23,25 +23,31 @@ public enum ProviderEventTypeID {
     public static let runtimeHeat       = "com.chorograph.runtimeHeat"
 }
 
+// MARK: - Backwards compatibility
+
+/// Deprecated alias kept for source compatibility with plugins built against SDK ≤ 1.0.1.
+@available(*, deprecated, renamed: "PluginEventTypeID")
+public typealias ProviderEventTypeID = PluginEventTypeID
+
 // MARK: - File activity events
 
 /// A file was read by the agent.
-public struct ReadFileEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.readFile
+public struct ReadFileEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.readFile
     public let path: String
     public init(path: String) { self.path = path }
 }
 
 /// A file was written (created or replaced) by the agent.
-public struct WriteFileEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.writeFile
+public struct WriteFileEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.writeFile
     public let path: String
     public init(path: String) { self.path = path }
 }
 
 /// A file was patched (edited in-place) by the agent.
-public struct PatchFileEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.patchFile
+public struct PatchFileEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.patchFile
     public let path: String
     public init(path: String) { self.path = path }
 }
@@ -49,8 +55,8 @@ public struct PatchFileEvent: ProviderEvent {
 // MARK: - Tool events
 
 /// The agent invoked a tool (non-file tools such as shell, search, etc.).
-public struct ToolCallEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.toolCall
+public struct ToolCallEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.toolCall
     /// The tool name as reported by the provider (e.g. "bash", "grep").
     public let name: String
     /// Key/value arguments the model passed to the tool. May be empty.
@@ -65,8 +71,8 @@ public struct ToolCallEvent: ProviderEvent {
 
 /// The agent's final response text, emitted just before `TurnFinishedEvent`.
 /// Carries the complete accumulated reply so callers need not fetch it separately.
-public struct AssistantReplyEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.assistantReply
+public struct AssistantReplyEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.assistantReply
     public let sessionID: String
     public let text: String
     public init(sessionID: String, text: String) {
@@ -76,37 +82,37 @@ public struct AssistantReplyEvent: ProviderEvent {
 }
 
 /// The agent's current turn finished (no more tool calls — final response).
-public struct TurnFinishedEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.turnFinished
+public struct TurnFinishedEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.turnFinished
     public let sessionID: String
     public init(sessionID: String) { self.sessionID = sessionID }
 }
 
 /// The provider successfully connected / reconnected.
-public struct ConnectedEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.connected
+public struct ConnectedEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.connected
     public init() {}
 }
 
 // MARK: - Status / diagnostic events
 
 /// A non-fatal status or informational message (shown in the activity log).
-public struct InfoEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.info
+public struct InfoEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.info
     public let message: String
     public init(_ message: String) { self.message = message }
 }
 
 /// A process-level error line (shown in the activity log in red).
-public struct ErrorEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.error
+public struct ErrorEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.error
     public let message: String
     public init(_ message: String) { self.message = message }
 }
 
 /// An unrecognised event type — pass-through for forward-compatibility.
-public struct OtherEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.other
+public struct OtherEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.other
     public let type: String
     public init(type: String) { self.type = type }
 }
@@ -114,8 +120,8 @@ public struct OtherEvent: ProviderEvent {
 // MARK: - Runtime telemetry events
 
 /// A test was executed for a specific file.
-public struct RuntimeTestResultEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.runtimeTestResult
+public struct RuntimeTestResultEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.runtimeTestResult
     public let path: String
     public let passed: Bool
     public let message: String?
@@ -127,8 +133,8 @@ public struct RuntimeTestResultEvent: ProviderEvent {
 }
 
 /// Execution activity (heat) detected in a file or function.
-public struct RuntimeHeatEvent: ProviderEvent {
-    public let eventTypeID = ProviderEventTypeID.runtimeHeat
+public struct RuntimeHeatEvent: PluginEvent {
+    public let eventTypeID = PluginEventTypeID.runtimeHeat
     public let path: String
     public let intensity: Double
     public init(path: String, intensity: Double) {
